@@ -1,70 +1,162 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import FloatingActionButton from "@/components/FloatingActionButton";
+import ListItem from "@/components/ListItem";
+import { Colors } from "@/constants/Colors";
+import theme from "@/constants/Theme";
+import { Plant } from "@/constants/types";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { plantsMock } from "@/mocks/data";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { useEffect, useRef, useState } from "react";
+import {
+  BackHandler,
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const screenWidth = Dimensions.get("window").width;
 
-export default function HomeScreen() {
+export default function Home() {
+  const themeMode = useColorScheme();
+  const [cameraOpen, setCameraOpen] = useState(false);
+  const [plants, setPlants] = useState<Plant[]>(plantsMock);
+  const [cameraPermission, requestCameraPermissions] = useCameraPermissions();
+  const cameraRef = useRef<CameraView>();
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        console.log("backhandler", cameraOpen);
+        if (cameraOpen) {
+          setCameraOpen(false);
+          return true;
+        }
+        return false;
+      }
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+  const onAddClick = async () => {
+    const response = await requestCameraPermissions();
+
+    setCameraOpen(true);
+  };
+
+  const onTakePicture = () => {
+    console.log(cameraRef.current);
+    const picture = cameraRef.current!.takePictureAsync();
+    console.log(picture);
+  };
+
+  if (!cameraPermission) {
+    // Camera permissions are still loading.
+    return <View />;
+  }
+
+  if (cameraOpen) {
+    return (
+      <View style={{ flex: 1, display: "flex" }}>
+        <CameraView style={{ flex: 1 }} facing={"back"} ref={cameraRef} />
+        <TouchableOpacity
+          onPress={onTakePicture}
+          style={{
+            bottom: 50,
+            position: "absolute",
+            right: "50%",
+            transform: [{ translateX: 32 }],
+            zIndex: 10,
+          }}
+        >
+          <View
+            style={{
+              width: 64,
+              height: 64,
+              borderRadius: 32,
+              backgroundColor: Colors[themeMode].primary,
+              borderWidth: 4,
+              borderColor: Colors[themeMode].light,
+            }}
+          ></View>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View
+      style={[
+        styles.baseContainer,
+        themeMode === "dark" ? styles.darkContainer : styles.darkContainer,
+      ]}
+    >
+      {cameraOpen && (
+        <View style={styles.baseContainer}>
+          <CameraView style={{ flex: 1 }} facing="back" />
+        </View>
+      )}
+      {plants.length === 0 && (
+        <View style={[styles.baseContainer, styles.center]}>
+          <Text
+            style={[styles[`${themeMode}Container`], { textAlign: "center" }]}
+          >
+            No plants
+          </Text>
+        </View>
+      )}
+      {plants.length > 0 && (
+        <FlatList
+          data={plants}
+          style={styles.list}
+          renderItem={({ item }) => (
+            <ListItem
+              title={item.name}
+              description={item.about}
+              image={item.photo}
+            />
+          )}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      )}
+      <FloatingActionButton
+        icon={"plus"}
+        onPress={() => {
+          onAddClick();
+        }}
+      />
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+const styles = StyleSheet.create<{ [key: string]: any }>({
+  list: {
+    marginVertical: -8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  center: {
+    justifyContent: "center",
+    alignItems: "center",
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  baseContainer: {
+    height: "100%",
+    display: "flex",
+    padding: theme.padding.container,
+  },
+  darkContainer: {
+    backgroundColor: Colors.dark.background,
+    color: Colors.dark.text,
+  },
+  lightContainer: {
+    backgroundColor: Colors.light.background,
+    color: Colors.light.dark,
+  },
+  lightText: {
+    color: Colors.light.text,
+  },
+  darkText: {
+    color: Colors.dark.text,
   },
 });
