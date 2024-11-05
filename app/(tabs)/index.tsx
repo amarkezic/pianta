@@ -1,36 +1,41 @@
 import FloatingActionButton from "@/components/FloatingActionButton";
-import ListItem from "@/components/ListItem";
+import PlantListItem from "@/components/PlantListItem";
 import { Colors } from "@/constants/Colors";
 import theme from "@/constants/Theme";
-import { Plant } from "@/constants/types";
+import { Plant, ThemeMode } from "@/constants/types";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { plantsMock } from "@/mocks/data";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, createRef, useContext } from "react";
 import {
+  ActivityIndicator,
   BackHandler,
-  Dimensions,
   FlatList,
+  Modal,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-
-const screenWidth = Dimensions.get("window").width;
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import geminiService from "../services/geminiService";
+import StorageProvider, { StorageContext } from "@/components/StorageProvider";
 
 export default function Home() {
-  const themeMode = useColorScheme();
+  const themeMode = useColorScheme() as ThemeMode;
   const [cameraOpen, setCameraOpen] = useState(false);
-  const [plants, setPlants] = useState<Plant[]>(plantsMock);
+  const [isAnalysing, setIsAnalysing] = useState(false);
   const [cameraPermission, requestCameraPermissions] = useCameraPermissions();
-  const cameraRef = useRef<CameraView>();
+  const cameraRef = createRef<CameraView>();
+  const {
+    isLoading: loadingPlants,
+    storage: { plants },
+    setPlants,
+  } = useContext(StorageContext);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       () => {
-        console.log("backhandler", cameraOpen);
         if (cameraOpen) {
           setCameraOpen(false);
           return true;
@@ -42,16 +47,33 @@ export default function Home() {
     return () => backHandler.remove();
   }, []);
 
-  const onAddClick = async () => {
-    const response = await requestCameraPermissions();
 
+  const onAddClick = async () => {
+    await requestCameraPermissions();
     setCameraOpen(true);
   };
 
-  const onTakePicture = () => {
-    console.log(cameraRef.current);
-    const picture = cameraRef.current!.takePictureAsync();
-    console.log(picture);
+  const onTakePicture = async () => {
+    const capturedPicture = await cameraRef.current!.takePictureAsync({
+      base64: true,
+    });
+    setCameraOpen(false);
+    setIsAnalysing(true);
+    try {
+      const analysedPlant = await geminiService.analyzePlant(
+        capturedPicture?.base64!
+      );
+      analysedPlant.photoUri = capturedPicture?.uri!;
+      console.log("geminiResponse", analysedPlant);
+
+      const updatedPlants = [...plants, analysedPlant];
+
+      setPlants(updatedPlants);
+    } catch (e) {
+      console.log(e);
+    }
+
+    setIsAnalysing(false);
   };
 
   if (!cameraPermission) {
@@ -62,6 +84,17 @@ export default function Home() {
   if (cameraOpen) {
     return (
       <View style={{ flex: 1, display: "flex" }}>
+        <TouchableOpacity
+          style={{
+            top: 15,
+            position: "absolute",
+            left: 15,
+            zIndex: 10,
+          }}
+          onPress={() => setCameraOpen(false)}
+        >
+          <MaterialCommunityIcons name="close" size={32} color="white" />
+        </TouchableOpacity>
         <CameraView style={{ flex: 1 }} facing={"back"} ref={cameraRef} />
         <TouchableOpacity
           onPress={onTakePicture}
@@ -95,31 +128,84 @@ export default function Home() {
         themeMode === "dark" ? styles.darkContainer : styles.darkContainer,
       ]}
     >
-      {cameraOpen && (
-        <View style={styles.baseContainer}>
-          <CameraView style={{ flex: 1 }} facing="back" />
-        </View>
-      )}
-      {plants.length === 0 && (
-        <View style={[styles.baseContainer, styles.center]}>
-          <Text
-            style={[styles[`${themeMode}Container`], { textAlign: "center" }]}
+      <Modal animationType="fade" transparent={true} visible={isAnalysing}>
+        <View
+          style={{ justifyContent: "center", alignItems: "center", flex: 1 }}
+        >
+          <View
+            style={{
+              position: "absolute",
+              height: "100%",
+              width: "100%",
+              backgroundColor: Colors[themeMode].dark,
+              opacity: 0.5,
+              zIndex: 10,
+            }}
+          ></View>
+          <View
+            style={{
+              backgroundColor: Colors[themeMode].primary,
+              borderWidth: 2,
+              borderColor: Colors[themeMode].light,
+              padding: 16,
+              borderRadius: theme.borderRadius.card,
+              zIndex: 20,
+            }}
           >
-            No plants
+            <ActivityIndicator color={Colors[themeMode].light} size={"large"} />
+            <Text
+              style={{
+                fontSize: theme.typography.h5,
+                color: Colors[themeMode].text,
+                marginTop: 10,
+              }}
+            >
+              Analysing plant
+            </Text>
+            <Text
+              style={{
+                fontSize: theme.typography.body,
+                fontWeight: "300",
+                color: Colors[themeMode].text,
+                textAlign: "center",
+              }}
+            >
+              Please wait
+            </Text>
+          </View>
+        </View>
+      </Modal>
+      {loadingPlants && (
+        <View style={[styles.baseContainer, styles.center]}>
+          <ActivityIndicator
+            color={Colors[themeMode].light}
+            size={"large"}
+          ></ActivityIndicator>
+          <Text style={{ color: Colors[themeMode].text, marginTop: 10 }}>
+            Loading plants
           </Text>
         </View>
       )}
-      {plants.length > 0 && (
+      {!loadingPlants && plants.length === 0 && (
+        <View style={[styles.baseContainer, styles.center]}>
+          <Text
+            style={[
+              styles[`${themeMode}Container`],
+              { textAlign: "center", fontSize: theme.typography.h6 },
+            ]}
+          >
+            Your garden is empty
+          </Text>
+          <Text style={{ fontSize: theme.typography.h5, marginTop: 8 }}>
+            🍃
+          </Text>
+        </View>
+      )}
+      {!loadingPlants && plants.length > 0 && (
         <FlatList
           data={plants}
           style={styles.list}
-          renderItem={({ item }) => (
-            <ListItem
-              title={item.name}
-              description={item.about}
-              image={item.photo}
-            />
-          )}
+          renderItem={({ item }) => <PlantListItem plant={item} />}
         />
       )}
       <FloatingActionButton

@@ -10,14 +10,18 @@ export const Colors = {
     secondary: "#bc6c25",
     background: "#fefae0",
     dark: "#403d39",
-    light: "#fffcf2"
-  },  
+    light: "#fffcf2",
+    blue: "#669bbc",
+    warning: "#ffbe0b",
+  },
   dark: {
     text: "#fefae0",
     primary: "#606c38",
     secondary: "#dda15e",
     background: "#403d39",
     dark: "#403d39",
-    light: "#fffcf2"
+    light: "#fffcf2",
+    blue: "#669bbc",
+    warning: "#ffbe0b",
   },
 };

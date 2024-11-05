@@ -4,6 +4,7 @@ const theme = {
   },
   borderRadius: {
     listItem: 8,
+    card: 8
   },
   typography: {
     h1: 37,
@@ -12,6 +13,7 @@ const theme = {
     h4: 25,
     h5: 21,
     h6: 17,
+    body: 14,
   },
 };
 

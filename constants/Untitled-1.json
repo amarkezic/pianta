@@ -1,0 +1,19 @@
+{
+  "name": "Prayer Plant",
+  "description": "The prayer plant is a popular houseplant known for its striking foliage. Its leaves are oval-shaped and have prominent veins that create a pattern resembling prayer hands. The leaves fold up at night and then unfurl during the day, giving the plant its name.",
+  "waterSchedule": {
+    "amount": 1,
+    "unit": "cup",
+    "times": 1,
+    "repeatEvery": "week"
+  },
+  "fertilizationSchedule": {
+    "amount": 1,
+    "unit": "tsp",
+    "times": 1,
+    "repeatEvery": "month"
+  },
+  "sunlight": "MODERATE",
+  "humidity": "MODERATE",
+  "environment": "Indoors"
+}
