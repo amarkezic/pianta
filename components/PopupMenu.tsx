@@ -31,7 +31,17 @@ const animationDuration = 200;
 const Item = ({ item }: { item: PopupMenuItem }) => {
   return (
     <TouchableOpacity onPress={item.onClick}>
-      <View key={item.title} style={{ height: menuItemLength, padding: 8, display: "flex", flexDirection: "row", alignItems: "center", gap: 3 }}>
+      <View
+        key={item.title}
+        style={{
+          height: menuItemLength,
+          padding: 8,
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 3,
+        }}
+      >
         {item.icon && (
           <MaterialCommunityIcons name={item.icon as any} size={16} />
         )}
@@ -70,20 +80,19 @@ export default function PopupMenu({ icon, menuItems }: Props) {
     }
     triggerRef.current.measure((x, y, width, height, pageX, pageY) => {
       setPopupPosition({
-        x: pageX - dropdownWith,
-        y: pageY + height,
+        x: pageX - dropdownWith + 10,
+        y: pageY - 5,
       });
     });
   }, [menuOpened]);
 
   return (
-    <>
+    <View style={{ position: "absolute", top: 10, right: 5 }}>
       <IconButton
         ref={triggerRef}
         icon={icon}
         onPress={onTriggerMenu}
         size={20}
-        style={{ position: "absolute", top: 0, right: 0 }}
       />
       <Modal transparent={true} visible={menuOpened}>
         <TouchableWithoutFeedback onPress={onTriggerMenu}>
@@ -107,6 +116,6 @@ export default function PopupMenu({ icon, menuItems }: Props) {
           <FlatList data={menuItems} renderItem={Item} />
         </Animated.View>
       </Modal>
-    </>
+    </View>
   );
 }

@@ -13,6 +13,10 @@ export const Colors = {
     light: "#fffcf2",
     blue: "#669bbc",
     warning: "#ffbe0b",
+    success: "#22bb33",
+    error: "#bb2124",
+    gray: "#A9A9A9",
+    darkGray: "#838383",
   },
   dark: {
     text: "#fefae0",
@@ -23,5 +27,9 @@ export const Colors = {
     light: "#fffcf2",
     blue: "#669bbc",
     warning: "#ffbe0b",
+    success: "#22bb33",
+    error: "#bb2124",
+    gray: "#A9A9A9",
+    darkGray: "#838383",
   },
 };

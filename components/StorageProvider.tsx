@@ -11,6 +11,7 @@ export type Context = {
   isLoading: boolean;
   setPlants: (plants: Plant[]) => void;
   removePlant: (plant: Plant) => void;
+  updatePlant: (id: string, updatedData: Partial<Plant>) => void;
 };
 
 const defaultStorage: Storage = {
@@ -22,6 +23,7 @@ export const StorageContext = createContext<Context>({
   isLoading: false,
   setPlants: () => {},
   removePlant: () => {},
+  updatePlant: () => {},
 });
 
 export default function StorageProvider({ children }: any) {
@@ -57,6 +59,21 @@ export default function StorageProvider({ children }: any) {
     AsyncStorage.setItem("storage", JSON.stringify(newState));
   };
 
+  const updatePlant = (id: string, updatedData: Partial<Plant>) => {
+    const newState = {
+      ...storage,
+      plants: storage.plants.map((plant) => {
+        if (plant.id === id) {
+          return { ...plant, ...updatedData };
+        }
+        return plant;
+      }),
+    };
+
+    setStorage(newState);
+    AsyncStorage.setItem("storage", JSON.stringify(newState));
+  };
+
   return (
     <StorageContext.Provider
       value={{
@@ -64,6 +81,7 @@ export default function StorageProvider({ children }: any) {
         isLoading,
         setPlants,
         removePlant,
+        updatePlant
       }}
     >
       {children}

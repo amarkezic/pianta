@@ -56,11 +56,14 @@ class GeminiService {
     const cleanedResult = result.response
       .text()
       .replace("json", "")
-      .replaceAll("`", "")
+      .replaceAll("`", "");
 
     console.log(cleanedResult);
 
     const analysedPlant = JSON.parse(cleanedResult) as Plant;
+
+    analysedPlant.lastWatered = undefined;
+    analysedPlant.lastFertilized = undefined;
 
     return analysedPlant;
   }

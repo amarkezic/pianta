@@ -2,6 +2,8 @@ import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Tabs } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Text, View } from "react-native";
+import Toast from "@/components/Toast";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme() ?? "light";
@@ -10,15 +12,26 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].light,
+        headerShown: true,
+        header: () => (
+          <View
+            style={{
+              backgroundColor: Colors[colorScheme].background,
+              height: 32,
+            }}
+          >
+            <Toast/>
+          </View>
+        ),
         tabBarStyle: {
           backgroundColor: Colors[colorScheme].background,
-        }
+        },
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="(plants)"
         options={{
-          title: "Home",
+          title: "Plants",
           tabBarIcon: ({ color, focused }) => (
             <MaterialCommunityIcons
               name={focused ? "flower-tulip" : "flower-tulip-outline"}

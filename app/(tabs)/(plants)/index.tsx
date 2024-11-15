@@ -2,7 +2,7 @@ import FloatingActionButton from "@/components/FloatingActionButton";
 import PlantListItem from "@/components/PlantListItem";
 import { Colors } from "@/constants/Colors";
 import theme from "@/constants/Theme";
-import { Plant, ThemeMode } from "@/constants/types";
+import { ThemeMode } from "@/constants/types";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useEffect, useState, createRef, useContext } from "react";
@@ -17,8 +17,9 @@ import {
   View,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import geminiService from "../services/geminiService";
-import StorageProvider, { StorageContext } from "@/components/StorageProvider";
+import geminiService from "../../services/geminiService";
+import { StorageContext } from "@/components/StorageProvider";
+import * as Crypto from 'expo-crypto';
 
 export default function Home() {
   const themeMode = useColorScheme() as ThemeMode;
@@ -47,7 +48,6 @@ export default function Home() {
     return () => backHandler.remove();
   }, []);
 
-
   const onAddClick = async () => {
     await requestCameraPermissions();
     setCameraOpen(true);
@@ -63,8 +63,8 @@ export default function Home() {
       const analysedPlant = await geminiService.analyzePlant(
         capturedPicture?.base64!
       );
+      analysedPlant.id = Crypto.randomUUID();
       analysedPlant.photoUri = capturedPicture?.uri!;
-      console.log("geminiResponse", analysedPlant);
 
       const updatedPlants = [...plants, analysedPlant];
 

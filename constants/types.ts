@@ -20,6 +20,7 @@ export type Dimension = {
 };
 
 export interface Plant {
+  id: string;
   name: string;
   photoUri: string;
   description: string;
@@ -28,6 +29,8 @@ export interface Plant {
   sunlight: Amount;
   humidity: Amount;
   environment: string;
+  lastWatered?: Date;
+  lastFertilized?: Date;
 }
 
 export interface Schedule {
