@@ -19,7 +19,9 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import geminiService from "../../services/geminiService";
 import { StorageContext } from "@/components/StorageProvider";
-import * as Crypto from 'expo-crypto';
+import * as Crypto from "expo-crypto";
+import React from "react";
+import WeatherComponent from "@/components/WeatherComponent";
 
 export default function Home() {
   const themeMode = useColorScheme() as ThemeMode;
@@ -202,11 +204,34 @@ export default function Home() {
         </View>
       )}
       {!loadingPlants && plants.length > 0 && (
-        <FlatList
-          data={plants}
-          style={styles.list}
-          renderItem={({ item }) => <PlantListItem plant={item} />}
-        />
+        <>
+          <View
+            style={[{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 16,
+              gap: 3,
+              flexDirection: "row",
+            }]}
+          >
+            <WeatherComponent />
+            <Text
+              style={{
+                fontSize: theme.typography.h6,
+                color: Colors[themeMode].text,
+                fontWeight: "bold",
+              }}
+            >
+              Hello Jon!
+            </Text>
+          </View>
+          <FlatList
+            data={plants}
+            style={styles.list}
+            renderItem={({ item }) => <PlantListItem plant={item} />}
+          />
+        </>
       )}
       <FloatingActionButton
         icon={"plus"}
