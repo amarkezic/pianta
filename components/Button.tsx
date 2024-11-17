@@ -48,7 +48,6 @@ export default function Button({
     <Pressable
       onTouchStart={onButtonPress}
       onTouchEnd={onButtonLift}
-      disabled={disabled}
     >
       <View
         style={{

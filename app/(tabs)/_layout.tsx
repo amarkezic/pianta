@@ -2,7 +2,7 @@ import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Tabs } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import Toast from "@/components/Toast";
 
 export default function TabLayout() {
@@ -17,7 +17,6 @@ export default function TabLayout() {
           <View
             style={{
               backgroundColor: Colors[colorScheme].background,
-              height: 32,
             }}
           >
             <Toast/>

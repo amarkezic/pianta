@@ -32,6 +32,7 @@ export default function PlantListItem({ plant }: Props) {
   const alreadyWatered = !!plant.lastWatered;
 
   const onDelete = () => {
+    onShowToast("Success", "Plant was deleted successfully", ToastType.SUCCESS);
     removePlant(plant);
   };
 
@@ -52,11 +53,10 @@ export default function PlantListItem({ plant }: Props) {
   return (
     <Pressable
       onPress={() => {
-        router.push({ pathname: "/(tabs)/(plants)/details/[id]", params: { id: plant.id } });
-/*         router.push({
-          pathname: "/(tabs)plants[id]",
+        router.push({
+          pathname: "/(tabs)/(plants)/details/[id]",
           params: { id: plant.id },
-        }); */
+        });
       }}
     >
       <View style={styles.listItem}>
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   image: {
     width: 60,
     height: 60,
-    borderRadius: theme.borderRadius.listItem,
+    borderRadius: 4,
   },
   imageContainer: {
     borderRadius: theme.borderRadius.listItem,

@@ -7,9 +7,14 @@ import {
   View,
   Modal,
   TouchableWithoutFeedback,
+  Pressable,
 } from "react-native";
 import theme from "@/constants/Theme";
-import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, {
+  Easing,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import React from "react";
 import { Position } from "@/constants/types";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -28,28 +33,35 @@ export type PopupMenuItem = {
 const menuItemLength = 40;
 const dropdownWith = 100;
 const animationDuration = 200;
-const Item = ({ item }: { item: PopupMenuItem }) => {
-  return (
-    <TouchableOpacity onPress={item.onClick}>
-      <View
-        key={item.title}
-        style={{
-          height: menuItemLength,
-          padding: 8,
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 3,
-        }}
-      >
-        {item.icon && (
-          <MaterialCommunityIcons name={item.icon as any} size={16} />
-        )}
-        <Text style={{ paddingBottom: 1 }}>{item.title}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
+const Item =
+  (onTriggerMenu: () => void) =>
+  ({ item }: { item: PopupMenuItem }) => {
+    const _onClick = () => {
+      onTriggerMenu();
+      item.onClick();
+    };
+
+    return (
+      <Pressable onPress={_onClick}>
+        <View
+          key={item.title}
+          style={{
+            height: menuItemLength,
+            padding: 8,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 3,
+          }}
+        >
+          {item.icon && (
+            <MaterialCommunityIcons name={item.icon as any} size={16} />
+          )}
+          <Text style={{ paddingBottom: 1 }}>{item.title}</Text>
+        </View>
+      </Pressable>
+    );
+  };
 
 export default function PopupMenu({ icon, menuItems }: Props) {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -71,6 +83,7 @@ export default function PopupMenu({ icon, menuItems }: Props) {
       }, animationDuration);
     } else {
       setMenuOpened(newMenuState);
+      setMenuOpened(newMenuState);
     }
   };
 
@@ -81,7 +94,7 @@ export default function PopupMenu({ icon, menuItems }: Props) {
     triggerRef.current.measure((x, y, width, height, pageX, pageY) => {
       setPopupPosition({
         x: pageX - dropdownWith + 10,
-        y: pageY - 5,
+        y: pageY + height,
       });
     });
   }, [menuOpened]);
@@ -94,7 +107,7 @@ export default function PopupMenu({ icon, menuItems }: Props) {
         onPress={onTriggerMenu}
         size={20}
       />
-      <Modal transparent={true} visible={menuOpened}>
+      <Modal transparent={true} visible={menuOpened} animationType="none">
         <TouchableWithoutFeedback onPress={onTriggerMenu}>
           <View style={{ flex: 1 }}></View>
         </TouchableWithoutFeedback>
@@ -113,7 +126,11 @@ export default function PopupMenu({ icon, menuItems }: Props) {
             width: dropdownWith,
           }}
         >
-          <FlatList data={menuItems} renderItem={Item} />
+          <FlatList
+            data={menuItems}
+            renderItem={Item(onTriggerMenu)}
+            style={{ height: 0 }}
+          />
         </Animated.View>
       </Modal>
     </View>

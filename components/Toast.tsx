@@ -1,16 +1,13 @@
 import { Colors } from "@/constants/Colors";
 import theme from "@/constants/Theme";
 import { ThemeMode } from "@/constants/types";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { Text, useColorScheme, View } from "react-native";
 import Animated, {
-  SharedValue,
   useSharedValue,
   withTiming,
   withSpring,
-  runOnJS,
 } from "react-native-reanimated";
-import * as Crypto from "expo-crypto";
 import { ToastContext } from "./ToastProvider";
 
 export type Toast = {
@@ -40,10 +37,12 @@ function ToastCard({ toast, index }: ToastCardProps) {
   const { onRemoveToast, toasts } = useContext(ToastContext);
 
   useEffect(() => {
-    top.value = withSpring(20 - index * 5);
+    top.value = withSpring(15 - index * 5);
     left.value = withTiming(
       multipleToastLeftStart + index * 2
     );
+
+    // TODO not the best way to do it with timeouts
     setTimeout(() => {
       top.value = withTiming(hiddenToastTop, { duration: 500 });
     }, 3000);
@@ -114,7 +113,7 @@ export default function Toast() {
         flex: 1,
         position: "relative",
         paddingHorizontal: 16,
-        marginTop: 32,
+        marginTop: 0,
         zIndex: 10,
         backgroundColor: "blue",
         width: "100%",
