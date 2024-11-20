@@ -26,23 +26,35 @@ class GeminiService {
       HIGH
     }
 
+    HealthScoreRange: 0-1
+
     Response = {
-      name: string,
+      englishName: string,
       description: string,
+      latinName: string,
+      healthScore: number,
       waterSchedule: {
         amount: number;
         unit: string;
         times: number;
         repeatEvery: string;
+        description: string;
       },
       fertilizationSchedule: {
         amount: number;
         unit: string;
         times: number;
         repeatEvery: string;
+        description: string;
       }
-      sunlight: Sunlight,
-      humidity: Humidity,
+      sunlight: {
+        amount: Sunlight;
+        description: string;
+      },
+      humidity: {
+        amount: Humidity;
+        description: string;
+      }
       environment: string
     }`;
     const imageAttachment = {

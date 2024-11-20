@@ -18,7 +18,7 @@ import { StorageContext } from "./StorageProvider";
 import Button from "./Button";
 import { ToastContext } from "./ToastProvider";
 import { ToastType } from "./Toast";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 
 type Props = {
   plant: Plant;
@@ -73,7 +73,7 @@ export default function PlantListItem({ plant }: Props) {
             <Image source={plant.photoUri} style={styles.image} />
           </View>
           <View>
-            <Text style={styles.title}>{plant.name}</Text>
+            <Text style={styles.title}>{plant.englishName}</Text>
             <Text style={[styles.subtitle, { color: Colors[themeMode].text }]}>
               <Text style={{ fontWeight: "bold" }}>Last watered: </Text>
               {plant.lastWatered
@@ -114,12 +114,12 @@ export default function PlantListItem({ plant }: Props) {
             />
             <Chip
               icon={"white-balance-sunny"}
-              text={plant.sunlight.toLowerCase()}
+              text={plant.sunlight.amount.toLowerCase()}
               color={Colors[themeMode].warning}
             />
             <Chip
               icon={"weather-fog"}
-              text={`${plant.humidity.toLowerCase()}`}
+              text={`${plant.humidity.amount.toLowerCase()}`}
               color={Colors[themeMode].gray}
             />
           </ScrollView>
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   imageContainer: {
-    borderRadius: theme.borderRadius.listItem,
+    borderRadius: theme.borderRadius.image,
     borderWidth: 1,
     borderColor: Colors.dark.light,
     padding: 3,

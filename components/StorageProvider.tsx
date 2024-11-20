@@ -52,7 +52,7 @@ export default function StorageProvider({ children }: any) {
   const removePlant = (plant: Plant) => {
     const newState = {
       ...storage,
-      plants: storage.plants.filter((p) => p.name !== plant.name),
+      plants: storage.plants.filter((p) => p.englishName !== plant.englishName),
     };
 
     setStorage(newState);

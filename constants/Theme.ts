@@ -4,6 +4,7 @@ const theme = {
   },
   borderRadius: {
     listItem: 8,
+    image: 8,
     card: 8,
     button: 24
   },
@@ -15,6 +16,7 @@ const theme = {
     h5: 21,
     h6: 17,
     body: 14,
+    subtitle: 12,
   },
 };
 

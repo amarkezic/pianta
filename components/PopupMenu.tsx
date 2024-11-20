@@ -107,7 +107,7 @@ export default function PopupMenu({ icon, menuItems }: Props) {
         onPress={onTriggerMenu}
         size={20}
       />
-      <Modal transparent={true} visible={menuOpened} animationType="none">
+      <Modal transparent={true} visible={menuOpened} animationType="none" collapsable={true}>
         <TouchableWithoutFeedback onPress={onTriggerMenu}>
           <View style={{ flex: 1 }}></View>
         </TouchableWithoutFeedback>

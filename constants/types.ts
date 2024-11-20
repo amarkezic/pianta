@@ -3,7 +3,7 @@ export enum ThemeMode {
   DARK = "dark",
 }
 
-enum Amount {
+export enum Amount {
   LOW = "low",
   MODERATE = "moderate",
   HIGH = "high",
@@ -21,13 +21,15 @@ export type Dimension = {
 
 export interface Plant {
   id: string;
-  name: string;
+  englishName: string;
   photoUri: string;
+  latinName: string;
+  healthScore: number;
   description: string;
   waterSchedule: Schedule;
   fertilizationSchedule: Schedule;
-  sunlight: Amount;
-  humidity: Amount;
+  sunlight: AmountSchedule;
+  humidity: AmountSchedule;
   environment: string;
   lastWatered?: Date;
   lastFertilized?: Date;
@@ -38,4 +40,10 @@ export interface Schedule {
   unit: string;
   times: number;
   repeatEvery: string;
+  description: string;
+}
+
+export interface AmountSchedule {
+  amount: Amount;
+  description: string;
 }

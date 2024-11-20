@@ -3,6 +3,8 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
+export type Color = keyof typeof Colors.light | keyof typeof Colors.dark
+
 export const Colors = {
   light: {
     text: "#252422",
