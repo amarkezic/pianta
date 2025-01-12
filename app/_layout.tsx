@@ -12,12 +12,17 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import StorageProvider from "@/components/StorageProvider";
 import { ToastProvider } from "@/components/ToastProvider";
+import { AuthProvider } from "@/contexts/authProvider";
+import { StatusBar } from "expo-status-bar";
+import { View } from "react-native";
+import { Colors } from "@/constants/Colors";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const themeMode = useColorScheme() ?? "light";
+
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -34,14 +39,33 @@ export default function RootLayout() {
 
   return (
     <ToastProvider>
-      <StorageProvider>
-        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-        </ThemeProvider>
-      </StorageProvider>
+      <AuthProvider>
+        <StorageProvider>
+          <ThemeProvider
+            value={themeMode === "dark" ? DarkTheme : DefaultTheme}
+          >
+            <StatusBar style="auto" />
+            <Stack
+              screenOptions={{
+                header: () => {
+                  return (
+                    <View
+                      style={{
+                        height: 30,
+                        backgroundColor: Colors[themeMode].background,
+                      }}
+                    ></View>
+                  );
+                },
+              }}
+            >
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="sign-in" />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+          </ThemeProvider>
+        </StorageProvider>
+      </AuthProvider>
     </ToastProvider>
   );
 }

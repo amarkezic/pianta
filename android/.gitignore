@@ -1,0 +1,40 @@
+# OSX
+#
+.DS_Store
+
+# Android/IntelliJ
+#
+build/
+.idea
+.gradle
+local.properties
+*.iml
+*.hprof
+.cxx/
+
+# Bundle artifacts
+*.jsbundle
+
+# Log files
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Build directories
+app/build/
+*/build/
+
+# Proguard configuration files
+proguard-rules.pro
+
+# Miscellaneous
+*.apk
+*.ap_
+*.dex
+*.class
+
+# Android NDK
+ndkBuild/
+local.properties

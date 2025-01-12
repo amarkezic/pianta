@@ -1,6 +1,5 @@
 import { Plant } from "@/constants/types";
 import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
-import { createContext } from "react";
 
 class GeminiService {
   private _api: GoogleGenerativeAI;

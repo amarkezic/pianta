@@ -118,7 +118,7 @@ export default function PopupMenu({ icon, menuItems }: Props) {
             backgroundColor: "white",
             display: "flex",
             zIndex: 100,
-            top: popupPosition.y,
+            top: popupPosition.y- 25,
             left: popupPosition.x,
             overflow: "hidden",
             borderRadius: theme.borderRadius.listItem,

@@ -17,7 +17,7 @@ import {
   View,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import geminiService from "../../services/geminiService";
+import geminiService from "../../../services/geminiService";
 import { StorageContext } from "@/components/StorageProvider";
 import * as Crypto from "expo-crypto";
 import React from "react";

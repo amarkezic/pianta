@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/Colors";
 import theme from "@/constants/Theme";
 import { ThemeMode } from "@/constants/types";
-import { ReactNode } from "react";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   Pressable,
   StyleSheet,
@@ -13,14 +13,16 @@ import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
 
 type Props = {
   value: string;
-  disabled?: boolean;
   onPress: () => void;
+  disabled?: boolean;
+  icon?: any;
   type?: "primary" | "secondary";
 };
 
 export default function Button({
   value,
   onPress,
+  icon,
   type = "primary",
   disabled,
 }: Props) {
@@ -45,10 +47,7 @@ export default function Button({
   };
 
   return (
-    <Pressable
-      onTouchStart={onButtonPress}
-      onTouchEnd={onButtonLift}
-    >
+    <Pressable onTouchStart={onButtonPress} onTouchEnd={onButtonLift}>
       <View
         style={{
           position: "relative",
@@ -59,7 +58,9 @@ export default function Button({
           style={[
             styles.button,
             {
-              backgroundColor: disabled ? Colors[themeMode].darkGray : Colors[themeMode][type],
+              backgroundColor: disabled
+                ? Colors[themeMode].darkGray
+                : Colors[themeMode][type],
               position: "absolute",
               width: "100%",
               bottom: buttonShadowBottom,
@@ -72,7 +73,8 @@ export default function Button({
               { color: Colors[themeMode].text, opacity: disabled ? 0.5 : 1 },
             ]}
           >
-            {value}
+            {icon && <MaterialCommunityIcons name={"google"} size={14} />}
+            {` ${value}`}
           </Text>
         </Animated.View>
         <Animated.View

@@ -1,12 +1,22 @@
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import Toast from "@/components/Toast";
+import { useSession } from "@/contexts/authProvider";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme() ?? "light";
+  const { user, isLoading } = useSession();
+
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (!user) {
+    return <Redirect href={"/sign-in"} />;
+  }
 
   return (
     <Tabs
@@ -19,7 +29,7 @@ export default function TabLayout() {
               backgroundColor: Colors[colorScheme].background,
             }}
           >
-            <Toast/>
+            <Toast />
           </View>
         ),
         tabBarStyle: {
